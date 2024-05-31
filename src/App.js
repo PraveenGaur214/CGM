@@ -46,7 +46,7 @@ function App() {
        <button onClick={toggleDarkMode}>
         {isDarkMode ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
       </button>
-      <BrowserRouter>
+      <BrowserRouter basename="/CGM">
       <Routes>
         <Route path="/" element={<Login />}/>
         <Route path="/users" element={<Users />} />
