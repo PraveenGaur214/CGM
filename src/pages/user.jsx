@@ -1,42 +1,5 @@
 
 
-// import React from 'react';
-// import { Tabs, TabList, TabPanels, Tab, TabPanel, Button, ButtonGroup } from '@chakra-ui/react';
-// import {
-//     Modal,
-//     ModalOverlay,
-//     ModalContent,
-//     ModalHeader,
-//     ModalFooter,
-//     ModalBody,
-//     ModalCloseButton,
-//   } from '@chakra-ui/react';
-
-// function user() {
-//   return (
-//     <div><h1>Hello</h1>
-//     <Tabs variant='enclosed'>
-//   <TabList>
-//     <Tab>One</Tab>
-//     <Tab>Two</Tab>
-//     <Button colorScheme='blue'>Button</Button>
-//   </TabList>
-//   <TabPanels>
-//     <TabPanel>
-//       <p>one!</p>
-//     </TabPanel>
-//     <TabPanel>
-//       <p>two!</p>
-//     </TabPanel>
-//   </TabPanels>
-// </Tabs>
-//     </div>
-//   )
-// }
-
-// export default user
-
-
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
