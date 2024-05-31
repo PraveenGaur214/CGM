@@ -55,10 +55,7 @@ function App() {
     </BrowserRouter>  
       
     </ChakraProvider> 
-    </div>
-      
-    
-    
+    </div>  
   );
 }
 
