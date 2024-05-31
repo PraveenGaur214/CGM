@@ -1,5 +1,4 @@
 
-
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
@@ -15,7 +14,8 @@ import {
     ModalHeader,
     ModalFooter,
     ModalBody,
-    ModalCloseButton,FormControl,
+    ModalCloseButton,
+    FormControl,
     FormLabel,
     Input,
     Textarea,
@@ -30,22 +30,23 @@ import {
 
 function User() {
     const [isOpen, setIsOpen] = useState(false);
-    const [tabOneData, setTabOneData] = useState(null);
+    const [isEdit, setIsEdit] = useState(false);
+    const [currentEditIndex, setCurrentEditIndex] = useState(null);
     const history = useNavigate();
     const [formData, setFormData] = useState({
+        id: '',
+        customerName: '',
+        price: '',
+        lastModified: '',
         name: '',
         category: '',
         characteristics: '',
         features: '',
         brand: '',
-        sku: {
-            sellingPrice: '',
-            maxRetailPrice: '',
-            amount: '',
-            unit: '',
-            quantity: '',
-        },
+        skus: [{ sku_id: '', price: '', quantity: '' }],
     });
+    const [orders, setOrders] = useState([]);
+    const [completedOrders, setCompletedOrders] = useState([]);
 
     const handleOpenModal = () => {
         setIsOpen(true);
@@ -53,20 +54,51 @@ function User() {
 
     const handleCloseModal = () => {
         setIsOpen(false);
+        setIsEdit(false);
+        setFormData({
+            id: '',
+            customerName: '',
+            price: '',
+            lastModified: '',
+            name: '',
+            category: '',
+            characteristics: '',
+            features: '',
+            brand: '',
+            skus: [{ sku_id: '', price: '', quantity: '' }],
+        });
     };
 
     const handleLogout = () => {
-        // Implement your logout logic here, e.g., clear session/local storage, redirect to login page, etc.
         history('/');
         console.log("Logged out");
     };
 
-    const handleTabChange = (index) => {
-        if (index === 0) {
-            const transformedData = Object.entries(formData).map(([key, value]) => ({ field: key, value }));
-        setTabOneData(transformedData);
+    const handleSaveOrder = () => {
+        if (isEdit) {
+            const updatedOrders = [...orders];
+            updatedOrders[currentEditIndex] = formData;
+            setOrders(updatedOrders);
+            setIsEdit(false);
+            setCurrentEditIndex(null);
+        } else {
+            setOrders(prevOrders => [...prevOrders, formData]);
         }
+        setIsOpen(false);
+        setFormData({
+            id: '',
+            customerName: '',
+            price: '',
+            lastModified: '',
+            name: '',
+            category: '',
+            characteristics: '',
+            features: '',
+            brand: '',
+            skus: [{ sku_id: '', price: '', quantity: '' }],
+        });
     };
+
     const handleInputChange = (e) => {
         const { name, value } = e.target;
         setFormData(prevState => ({
@@ -75,64 +107,147 @@ function User() {
         }));
     };
 
-    const handleSkuInputChange = (e, skuField) => {
+    const handleSkuInputChange = (e, index, field) => {
         const { value } = e.target;
+        const updatedSkus = formData.skus.map((sku, i) => (
+            i === index ? { ...sku, [field]: value } : sku
+        ));
         setFormData(prevState => ({
             ...prevState,
-            sku: {
-                ...prevState.sku,
-                [skuField]: value
-            }
+            skus: updatedSkus
         }));
     };
+
+    const handleAddSku = () => {
+        setFormData(prevState => ({
+            ...prevState,
+            skus: [...prevState.skus, { sku_id: '', price: '', quantity: '' }]
+        }));
+    };
+
+    const handleEditOrder = (index) => {
+        setFormData(orders[index]);
+        setIsEdit(true);
+        setCurrentEditIndex(index);
+        setIsOpen(true);
+    };
+
+    const handleViewOrder = (index) => {
+        setFormData(orders[index]);
+        setIsOpen(true);
+    };
+
+    const handleCompleteOrder = (index) => {
+        const completedOrder = orders[index];
+        const newCompletedOrder = {
+            customer_id: completedOrder.id,
+            items: completedOrder.skus.map(sku => ({
+                sku_id: sku.sku_id,
+                price: sku.price,
+                quantity: sku.quantity
+            })),
+            paid: true,
+            invoice_no: `Invoice - ${Math.floor(Math.random() * 1000000)}`,
+            invoice_date: new Date().toLocaleDateString(),
+        };
+        setCompletedOrders(prevCompletedOrders => [...prevCompletedOrders, newCompletedOrder]);
+        setOrders(prevOrders => prevOrders.filter((_, i) => i !== index));
+    };
+
     return (
         <div>
             <h1>Hello</h1>
-            <Tabs variant='enclosed' onChange={handleTabChange}>
+            <Tabs variant='enclosed'>
                 <TabList>
-                    <Tab>One</Tab>
-                    <Tab>Two</Tab>
-                    <Button colorScheme='blue' onClick={handleOpenModal}>Button</Button>
+                    <Tab>Orders</Tab>
+                    <Tab>Completed Orders</Tab>
+                    <Button colorScheme='blue' onClick={handleOpenModal}>Add Order</Button>
                     <Button colorScheme="red" onClick={handleLogout}>Logout</Button>
                 </TabList>
                 <TabPanels>
                     <TabPanel>
-                    {tabOneData && (
                         <Table variant="simple">
-        <Thead>
-            <Tr>
-                <Th>Field</Th>
-                <Th>Value</Th>
-            </Tr>
-        </Thead>
-        <Tbody>
-            {tabOneData.map((dataItem, index) => (
-                <Tr key={index}>
-                    <Td>{dataItem.field}</Td>
-                    <Td>{typeof dataItem.value === 'object' ? JSON.stringify(dataItem.value) : dataItem.value}</Td>
-                </Tr>
-            ))}
-        </Tbody>
-    </Table>
-
-                        )}
+                            <Thead>
+                                <Tr>
+                                    <Th>ID</Th>
+                                    <Th>Customer Name</Th>
+                                    <Th>Price</Th>
+                                    <Th>Last Modified</Th>
+                                    <Th>Actions</Th>
+                                </Tr>
+                            </Thead>
+                            <Tbody>
+                                {orders.map((order, index) => (
+                                    <Tr key={index}>
+                                        <Td>{order.id}</Td>
+                                        <Td>{order.customerName}</Td>
+                                        <Td>{order.price}</Td>
+                                        <Td>{order.lastModified}</Td>
+                                        <Td>
+                                            <Button colorScheme="yellow" onClick={() => handleEditOrder(index)}>Edit</Button>
+                                            <Button colorScheme="blue" onClick={() => handleViewOrder(index)}>View</Button>
+                                            <Button colorScheme="green" onClick={() => handleCompleteOrder(index)}>Complete</Button>
+                                        </Td>
+                                    </Tr>
+                                ))}
+                            </Tbody>
+                        </Table>
                     </TabPanel>
                     <TabPanel>
-                        <p>two!</p>
+                        <Table variant="simple">
+                            <Thead>
+                                <Tr>
+                                    <Th>Customer ID</Th>
+                                    <Th>Invoice No</Th>
+                                    <Th>Invoice Date</Th>
+                                    <Th>Items</Th>
+                                    <Th>Paid</Th>
+                                </Tr>
+                            </Thead>
+                            <Tbody>
+                                {completedOrders.map((order, index) => (
+                                    <Tr key={index}>
+                                        <Td>{order.customer_id}</Td>
+                                        <Td>{order.invoice_no}</Td>
+                                        <Td>{order.invoice_date}</Td>
+                                        <Td>
+                                            {order.items.map((item, itemIndex) => (
+                                                <div key={itemIndex}>
+                                                    SKU ID: {item.sku_id}, Price: {item.price}, Quantity: {item.quantity}
+                                                </div>
+                                            ))}
+                                        </Td>
+                                        <Td>{order.paid ? "Yes" : "No"}</Td>
+                                    </Tr>
+                                ))}
+                            </Tbody>
+                        </Table>
                     </TabPanel>
                 </TabPanels>
             </Tabs>
             <Modal size={"xl"} isOpen={isOpen} onClose={handleCloseModal}>
                 <ModalOverlay />
                 <ModalContent>
-                    <ModalHeader>Modal Title</ModalHeader>
+                    <ModalHeader>{isEdit ? "Edit Order" : "Add Order"}</ModalHeader>
                     <ModalCloseButton />
-                    {/* <ModalBody>
-                        Your form components go here
-                        <p>This is a modal form.</p>
-                    </ModalBody> */}
                     <ModalBody>
-                    <FormControl mb={4}>
+                        <FormControl mb={4}>
+                            <FormLabel>ID</FormLabel>
+                            <Input name="id" placeholder="Enter ID" value={formData.id} onChange={handleInputChange} isDisabled={isEdit} />
+                        </FormControl>
+                        <FormControl mb={4}>
+                            <FormLabel>Customer Name</FormLabel>
+                            <Input name="customerName" placeholder="Enter customer name" value={formData.customerName} onChange={handleInputChange} />
+                        </FormControl>
+                        <FormControl mb={4}>
+                            <FormLabel>Price</FormLabel>
+                            <Input name="price" placeholder="Enter price" value={formData.price} onChange={handleInputChange} />
+                        </FormControl>
+                        <FormControl mb={4}>
+                            <FormLabel>Last Modified</FormLabel>
+                            <Input name="lastModified" placeholder="Enter last modified date" value={formData.lastModified} onChange={handleInputChange} />
+                        </FormControl>
+                        <FormControl mb={4}>
                             <FormLabel>Name</FormLabel>
                             <Input name="name" placeholder="Enter name" value={formData.name} onChange={handleInputChange} />
                         </FormControl>
@@ -152,23 +267,23 @@ function User() {
                             <FormLabel>Brand</FormLabel>
                             <Input name="brand" placeholder="Enter brand" value={formData.brand} onChange={handleInputChange} />
                         </FormControl>
-                        <FormControl mb={4}>
-                            <FormLabel>Sku</FormLabel>
-                            <InputGroup>
-                                <Input name="sellingPrice" placeholder="Selling price" value={formData.sku.sellingPrice} onChange={(e) => handleSkuInputChange(e, 'sellingPrice')} />
-                                <Input name="maxRetailPrice" placeholder="Max retail price" value={formData.sku.maxRetailPrice} onChange={(e) => handleSkuInputChange(e, 'maxRetailPrice')} />
-                                <Input name="amount" placeholder="Amount" value={formData.sku.amount} onChange={(e) => handleSkuInputChange(e, 'amount')} />
-                                <Input name="unit" placeholder="Unit" value={formData.sku.unit} onChange={(e) => handleSkuInputChange(e, 'unit')} />
-                                <Input name="quantity" placeholder="Quantity in inventory" value={formData.sku.quantity} onChange={(e) => handleSkuInputChange(e, 'quantity')} />
-                            </InputGroup>
-                        </FormControl>
-                        </ModalBody>
-
+                        {formData.skus.map((sku, index) => (
+                            <FormControl key={index} mb={4}>
+                                <FormLabel>SKU {index + 1}</FormLabel>
+                                <InputGroup>
+                                    <Input name={`sku_id_${index}`} placeholder="SKU ID" value={sku.sku_id} onChange={(e) => handleSkuInputChange(e, index, 'sku_id')} />
+                                    <Input name={`sku_price_${index}`} placeholder="Price" value={sku.price} onChange={(e) => handleSkuInputChange(e, index, 'price')} />
+                                    <Input name={`sku_quantity_${index}`} placeholder="Quantity" value={sku.quantity} onChange={(e) => handleSkuInputChange(e, index, 'quantity')} />
+                                </InputGroup>
+                            </FormControl>
+                        ))}
+                        <Button colorScheme="blue" onClick={handleAddSku}>Add SKU</Button>
+                    </ModalBody>
                     <ModalFooter>
                         <Button colorScheme="blue" mr={3} onClick={handleCloseModal}>
                             Close
                         </Button>
-                        <Button colorScheme="green" onClick={() => { handleCloseModal(); handleTabChange(0); }}>
+                        <Button colorScheme="green" onClick={handleSaveOrder}>
                             Save
                         </Button>
                     </ModalFooter>
@@ -179,3 +294,4 @@ function User() {
 }
 
 export default User;
+
