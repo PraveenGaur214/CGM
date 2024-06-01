@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
+    Box,
     Tabs,
     TabList,
     TabPanels,
@@ -27,6 +28,8 @@ import {
     Th,
     Td,
 } from '@chakra-ui/react';
+import DatePicker from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
 
 function User() {
     const [isOpen, setIsOpen] = useState(false);
@@ -37,7 +40,7 @@ function User() {
         id: '',
         customerName: '',
         price: '',
-        lastModified: '',
+        lastModified: new Date(),
         name: '',
         category: '',
         characteristics: '',
@@ -59,7 +62,7 @@ function User() {
             id: '',
             customerName: '',
             price: '',
-            lastModified: '',
+            lastModified: new Date(),
             name: '',
             category: '',
             characteristics: '',
@@ -89,7 +92,7 @@ function User() {
             id: '',
             customerName: '',
             price: '',
-            lastModified: '',
+            lastModified: new Date(),
             name: '',
             category: '',
             characteristics: '',
@@ -126,7 +129,11 @@ function User() {
     };
 
     const handleEditOrder = (index) => {
-        setFormData(orders[index]);
+        const order = orders[index];
+        setFormData({
+            ...order,
+            lastModified: new Date(order.lastModified) // Ensure the date is in the correct format
+        });
         setIsEdit(true);
         setCurrentEditIndex(index);
         setIsOpen(true);
@@ -157,12 +164,19 @@ function User() {
     return (
         <div>
             <h1>Hello</h1>
+            <Box pos="absolute" w="5" left="2%" top="0%" zIndex={2}>
+            <Button colorScheme="red" onClick={handleLogout}>Logout</Button>
+</Box>
+<Box pos="absolute" w="10%" right="10%" zIndex={2}>
+<Button colorScheme='blue' onClick={handleOpenModal}>+ Add Order</Button>
+</Box>
+            
+                    
             <Tabs variant='enclosed'>
                 <TabList>
-                    <Tab>Orders</Tab>
+                    <Tab>Active Orders</Tab>
                     <Tab>Completed Orders</Tab>
-                    <Button colorScheme='blue' onClick={handleOpenModal}>Add Order</Button>
-                    <Button colorScheme="red" onClick={handleLogout}>Logout</Button>
+                    
                 </TabList>
                 <TabPanels>
                     <TabPanel>
@@ -182,7 +196,7 @@ function User() {
                                         <Td>{order.id}</Td>
                                         <Td>{order.customerName}</Td>
                                         <Td>{order.price}</Td>
-                                        <Td>{order.lastModified}</Td>
+                                        <Td>{new Date(order.lastModified).toLocaleDateString()}</Td> {/* Ensure date is displayed as string */}
                                         <Td>
                                             <Button colorScheme="yellow" onClick={() => handleEditOrder(index)}>Edit</Button>
                                             <Button colorScheme="blue" onClick={() => handleViewOrder(index)}>View</Button>
@@ -245,7 +259,11 @@ function User() {
                         </FormControl>
                         <FormControl mb={4}>
                             <FormLabel>Last Modified</FormLabel>
-                            <Input name="lastModified" placeholder="Enter last modified date" value={formData.lastModified} onChange={handleInputChange} />
+                            <DatePicker
+                                selected={formData.lastModified}
+                                onChange={(date) => setFormData(prevState => ({ ...prevState, lastModified: date }))}
+                                dateFormat="MM/dd/yyyy"
+                            />
                         </FormControl>
                         <FormControl mb={4}>
                             <FormLabel>Name</FormLabel>
@@ -278,7 +296,6 @@ function User() {
                                     <Input name={`sku_quantity_${index}`} placeholder="Amount" value={sku.amount} onChange={(e) => handleSkuInputChange(e, index, 'quantity')} />
                                     <Input name={`sku_quantity_${index}`} placeholder="unit" value={sku.unit} onChange={(e) => handleSkuInputChange(e, index, 'quantity')} />
                                     <Input name={`sku_quantity_${index}`} placeholder="Quantity" value={sku.quantity} onChange={(e) => handleSkuInputChange(e, index, 'quantity')} />
-                                
                                 </InputGroup>
                             </FormControl>
                         ))}
