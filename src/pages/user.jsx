@@ -58,6 +58,7 @@ function User() {
     const handleCloseModal = () => {
         setIsOpen(false);
         setIsEdit(false);
+        setIsViewMode(false);
         setFormData({
             id: '',
             customerName: '',
@@ -139,11 +140,18 @@ function User() {
         setIsOpen(true);
     };
 
+    const [isViewMode, setIsViewMode] = useState(false);
     const handleViewOrder = (index) => {
         setFormData(orders[index]);
+        setIsViewMode(true); // Set view mode to true
         setIsOpen(true);
     };
+    // const handleViewOrder = (index) => {
+    //     setFormData(orders[index]);
+    //     setIsOpen(true);
+    // };
 
+    
     const handleCompleteOrder = (index) => {
         const completedOrder = orders[index];
         const newCompletedOrder = {
@@ -247,15 +255,15 @@ function User() {
                     <ModalBody>
                         <FormControl mb={4}>
                             <FormLabel>ID</FormLabel>
-                            <Input name="id" placeholder="Enter ID" value={formData.id} onChange={handleInputChange} isDisabled={isEdit} />
+                            <Input name="id" placeholder="Enter ID" value={formData.id} onChange={handleInputChange} isDisabled={isViewMode} />
                         </FormControl>
                         <FormControl mb={4}>
                             <FormLabel>Customer Name</FormLabel>
-                            <Input name="customerName" placeholder="Enter customer name" value={formData.customerName} onChange={handleInputChange} />
+                            <Input name="customerName" placeholder="Enter customer name" value={formData.customerName} onChange={handleInputChange} isDisabled={isViewMode} />
                         </FormControl>
                         <FormControl mb={4}>
                             <FormLabel>Price</FormLabel>
-                            <Input name="price" placeholder="Enter price" value={formData.price} onChange={handleInputChange} />
+                            <Input name="price" placeholder="Enter price" value={formData.price} onChange={handleInputChange} isDisabled={isViewMode} />
                         </FormControl>
                         <FormControl mb={4}>
                             <FormLabel>Last Modified</FormLabel>
@@ -263,39 +271,40 @@ function User() {
                                 selected={formData.lastModified}
                                 onChange={(date) => setFormData(prevState => ({ ...prevState, lastModified: date }))}
                                 dateFormat="MM/dd/yyyy"
+                                isDisabled={isViewMode}
                             />
                         </FormControl>
                         <FormControl mb={4}>
                             <FormLabel>Name</FormLabel>
-                            <Input name="name" placeholder="Enter name" value={formData.name} onChange={handleInputChange} />
+                            <Input name="name" placeholder="Enter name" value={formData.name} onChange={handleInputChange} isDisabled={isViewMode}/>
                         </FormControl>
                         <FormControl mb={4}>
                             <FormLabel>Category</FormLabel>
-                            <Input name="category" placeholder="Enter category" value={formData.category} onChange={handleInputChange} />
+                            <Input name="category" placeholder="Enter category" value={formData.category} onChange={handleInputChange} isDisabled={isViewMode}/>
                         </FormControl>
                         <FormControl mb={4}>
                             <FormLabel>Characteristics</FormLabel>
-                            <Textarea name="characteristics" placeholder="Enter characteristics" value={formData.characteristics} onChange={handleInputChange} />
+                            <Textarea name="characteristics" placeholder="Enter characteristics" value={formData.characteristics} onChange={handleInputChange} isDisabled={isViewMode}/>
                         </FormControl>
                         <FormControl mb={4}>
                             <FormLabel>Features</FormLabel>
-                            <Textarea name="features" placeholder="Enter features" value={formData.features} onChange={handleInputChange} />
+                            <Textarea name="features" placeholder="Enter features" value={formData.features} onChange={handleInputChange} isDisabled={isViewMode}/>
                         </FormControl>
                         <FormControl mb={4}>
                             <FormLabel>Brand</FormLabel>
-                            <Input name="brand" placeholder="Enter brand" value={formData.brand} onChange={handleInputChange} />
+                            <Input name="brand" placeholder="Enter brand" value={formData.brand} onChange={handleInputChange} isDisabled={isViewMode}/>
                         </FormControl>
                         {formData.skus.map((sku, index) => (
                             <FormControl key={index} mb={4}>
                                 <FormLabel>SKU {index + 1}</FormLabel>
                                 <InputGroup>
-                                    <Input name={`sku_id_${index}`} placeholder="SKU ID" value={sku.sku_id} onChange={(e) => handleSkuInputChange(e, index, 'sku_id')} />
-                                    <Input name={`sku_price_${index}`} placeholder="Price" value={sku.price} onChange={(e) => handleSkuInputChange(e, index, 'price')} />
+                                    <Input name={`sku_id_${index}`} placeholder="SKU ID" value={sku.sku_id} onChange={(e) => handleSkuInputChange(e, index, 'sku_id')} isDisabled={isViewMode}/>
+                                    <Input name={`sku_price_${index}`} placeholder="Price" value={sku.price} onChange={(e) => handleSkuInputChange(e, index, 'price')} isDisabled={isViewMode}/>
                                     {/* <Input name={`sku_quantity_${index}`} placeholder="Selling Price" value={sku.sellingPrice} onChange={(e) => handleSkuInputChange(e, index, 'quantity')} /> */}
-                                    <Input name={`sku_quantity_${index}`} placeholder="Max Retail Price" value={sku.maxPrice} onChange={(e) => handleSkuInputChange(e, index, 'quantity')} />
-                                    <Input name={`sku_quantity_${index}`} placeholder="Amount" value={sku.amount} onChange={(e) => handleSkuInputChange(e, index, 'quantity')} />
-                                    <Input name={`sku_quantity_${index}`} placeholder="unit" value={sku.unit} onChange={(e) => handleSkuInputChange(e, index, 'quantity')} />
-                                    <Input name={`sku_quantity_${index}`} placeholder="Quantity" value={sku.quantity} onChange={(e) => handleSkuInputChange(e, index, 'quantity')} />
+                                    <Input name={`sku_quantity_${index}`} placeholder="Max Retail Price" value={sku.maxPrice} onChange={(e) => handleSkuInputChange(e, index, 'quantity')} isDisabled={isViewMode}/>
+                                    <Input name={`sku_quantity_${index}`} placeholder="Amount" value={sku.amount} onChange={(e) => handleSkuInputChange(e, index, 'quantity')} isDisabled={isViewMode} />
+                                    <Input name={`sku_quantity_${index}`} placeholder="unit" value={sku.unit} onChange={(e) => handleSkuInputChange(e, index, 'quantity')} isDisabled={isViewMode}/>
+                                    <Input name={`sku_quantity_${index}`} placeholder="Quantity" value={sku.quantity} onChange={(e) => handleSkuInputChange(e, index, 'quantity')} isDisabled={isViewMode}/>
                                 </InputGroup>
                             </FormControl>
                         ))}
