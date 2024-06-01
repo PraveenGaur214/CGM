@@ -46,7 +46,7 @@ function User() {
         characteristics: '',
         features: '',
         brand: '',
-        skus: [{ sku_id: '', price: '', quantity: '' }],
+        skus: [{ sku_id: '', price: '',  maxPrice:'', amount:'', unit:'', quantity: '' }],
     });
     const [orders, setOrders] = useState([]);
     const [completedOrders, setCompletedOrders] = useState([]);
@@ -69,7 +69,7 @@ function User() {
             characteristics: '',
             features: '',
             brand: '',
-            skus: [{ sku_id: '', price: '', quantity: '' }],
+            skus: [{ sku_id: '', price: '',maxPrice:'', amount:'', unit:'', quantity: '' }],
         });
     };
 
@@ -99,7 +99,7 @@ function User() {
             characteristics: '',
             features: '',
             brand: '',
-            skus: [{ sku_id: '', price: '', quantity: '' }],
+            skus: [{ sku_id: '', price: '',maxPrice:'', amount:'', unit:'', quantity: '' }],
         });
     };
 
@@ -301,9 +301,9 @@ function User() {
                                     <Input name={`sku_id_${index}`} placeholder="SKU ID" value={sku.sku_id} onChange={(e) => handleSkuInputChange(e, index, 'sku_id')} isDisabled={isViewMode}/>
                                     <Input name={`sku_price_${index}`} placeholder="Price" value={sku.price} onChange={(e) => handleSkuInputChange(e, index, 'price')} isDisabled={isViewMode}/>
                                     {/* <Input name={`sku_quantity_${index}`} placeholder="Selling Price" value={sku.sellingPrice} onChange={(e) => handleSkuInputChange(e, index, 'quantity')} /> */}
-                                    <Input name={`sku_quantity_${index}`} placeholder="Max Retail Price" value={sku.maxPrice} onChange={(e) => handleSkuInputChange(e, index, 'quantity')} isDisabled={isViewMode}/>
-                                    <Input name={`sku_quantity_${index}`} placeholder="Amount" value={sku.amount} onChange={(e) => handleSkuInputChange(e, index, 'quantity')} isDisabled={isViewMode} />
-                                    <Input name={`sku_quantity_${index}`} placeholder="unit" value={sku.unit} onChange={(e) => handleSkuInputChange(e, index, 'quantity')} isDisabled={isViewMode}/>
+                                    <Input name={`sku_maxPrice_${index}`} placeholder="Max Retail Price" value={sku.maxPrice} onChange={(e) => handleSkuInputChange(e, index, 'maxPrice')} isDisabled={isViewMode}/>
+                                    <Input name={`sku_amount_${index}`} placeholder="Amount" value={sku.amount} onChange={(e) => handleSkuInputChange(e, index, 'amount')} isDisabled={isViewMode} />
+                                    <Input name={`sku_unit_${index}`} placeholder="unit" value={sku.unit} onChange={(e) => handleSkuInputChange(e, index, 'unit')} isDisabled={isViewMode}/>
                                     <Input name={`sku_quantity_${index}`} placeholder="Quantity" value={sku.quantity} onChange={(e) => handleSkuInputChange(e, index, 'quantity')} isDisabled={isViewMode}/>
                                 </InputGroup>
                             </FormControl>
