@@ -121,7 +121,7 @@ function User() {
     const handleAddSku = () => {
         setFormData(prevState => ({
             ...prevState,
-            skus: [...prevState.skus, { sku_id: '', price: '', quantity: '' }]
+            skus: [...prevState.skus, { sku_id: '', price: '', maxPrice:'',amount:'',unit:'', quantity: '' }]
         }));
     };
 
@@ -273,7 +273,12 @@ function User() {
                                 <InputGroup>
                                     <Input name={`sku_id_${index}`} placeholder="SKU ID" value={sku.sku_id} onChange={(e) => handleSkuInputChange(e, index, 'sku_id')} />
                                     <Input name={`sku_price_${index}`} placeholder="Price" value={sku.price} onChange={(e) => handleSkuInputChange(e, index, 'price')} />
+                                    {/* <Input name={`sku_quantity_${index}`} placeholder="Selling Price" value={sku.sellingPrice} onChange={(e) => handleSkuInputChange(e, index, 'quantity')} /> */}
+                                    <Input name={`sku_quantity_${index}`} placeholder="Max Retail Price" value={sku.maxPrice} onChange={(e) => handleSkuInputChange(e, index, 'quantity')} />
+                                    <Input name={`sku_quantity_${index}`} placeholder="Amount" value={sku.amount} onChange={(e) => handleSkuInputChange(e, index, 'quantity')} />
+                                    <Input name={`sku_quantity_${index}`} placeholder="unit" value={sku.unit} onChange={(e) => handleSkuInputChange(e, index, 'quantity')} />
                                     <Input name={`sku_quantity_${index}`} placeholder="Quantity" value={sku.quantity} onChange={(e) => handleSkuInputChange(e, index, 'quantity')} />
+                                
                                 </InputGroup>
                             </FormControl>
                         ))}
